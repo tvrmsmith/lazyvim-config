@@ -6,3 +6,11 @@
 --
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
+function settitle()
+  vim.opt.title = true
+  vim.opt.titlestring = vim.fn.getcwd()
+end
+settitle()
+vim.api.nvim_create_autocmd("DirChanged", {
+  callback = settitle,
+})
