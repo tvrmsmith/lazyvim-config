@@ -22,3 +22,6 @@ vim.keymap.set("v", "<C-r>", function()
   -- send parsed substitution command to command line
   vim.api.nvim_input("<Esc>:%s/" .. pattern .. "//<Left>")
 end)
+
+vim.api.nvim_set_keymap("i", "jj", "<Esc>", { noremap = false })
+vim.api.nvim_set_keymap("i", "jk", "<Esc>", { noremap = false })
