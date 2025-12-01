@@ -15,6 +15,10 @@ return {
     },
   },
   {
+    "folke/tokyonight.nvim",
+    opts = { style = "night" },
+  },
+  {
     "HiPhish/rainbow-delimiters.nvim",
   },
   {
@@ -39,6 +43,9 @@ return {
         },
       },
     },
+  },
+  {
+    "f-person/auto-dark-mode.nvim",
   },
   -- {
   --   "zaldih/themery.nvim",

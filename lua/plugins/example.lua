@@ -35,17 +35,14 @@ return {
             },
           },
         },
-        win = {
-          input = {
-            keys = {
-              ["<c-o>d"] = { "inspect", mode = { "n", "i" } },
-              ["<c-o>f"] = { "toggle_follow", mode = { "i", "n" } },
-              ["<c-o>h"] = { "toggle_hidden", mode = { "i", "n" } },
-              ["<c-o>i"] = { "toggle_ignored", mode = { "i", "n" } },
-              ["<c-o>r"] = { "toggle_regex", mode = { "i", "n" } },
-              ["<c-o>m"] = { "toggle_maximize", mode = { "i", "n" } },
-              ["<c-o>p"] = { "toggle_preview", mode = { "i", "n" } },
-              ["<c-o>w"] = { "cycle_win", mode = { "i", "n" } },
+        sources = {
+          files = {
+            hidden = true,
+            ignored = true,
+          },
+          gh_diff = {
+            layout = {
+              preset = "ivy_split",
             },
           },
         },
@@ -91,21 +88,34 @@ return {
       },
     },
   },
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   dependencies = {
-  --     "Afourcat/treesitter-terraform-doc.nvim",
-  --   },
-  --   opts = {
-  --     servers = {
-  --       terraformls = {
-  --         on_attach = function(_, _)
-  --           require("treesitter-terraform-doc").setup({})
-  --         end,
-  --       },
-  --     },
-  --   },
-  -- },
+  {
+    "neovim/nvim-lspconfig",
+    -- dependencies = {
+    -- "Afourcat/treesitter-terraform-doc.nvim",
+    -- "lspcontainers/lspcontainers.nvim"
+    -- },
+    opts = {
+      servers = {
+        -- terraformls = {
+        --   on_attach = function(_, _)
+        --     require("treesitter-terraform-doc").setup({})
+        --   end,
+        ruby_lsp = {
+          mason = false,
+          cmd = {
+            "mise",
+            "exec",
+            "ruby@3.4.7",
+            "--",
+            "bundle",
+            "exec",
+            "--gemfile=" .. vim.fn.expand("~/dev/ruby-lsp/Gemfile"),
+            "ruby-lsp",
+          },
+        },
+      },
+    },
+  },
   {
     "aliqyan-21/wit.nvim",
   },
@@ -172,5 +182,18 @@ return {
       },
     },
     config = true,
+  },
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "olimorris/neotest-rspec",
+    },
+    opts = {
+      adapters = {
+        ["neotest-rspec"] = {
+          rspec_cmd = ".neotest-rspec-docker.sh",
+        },
+      },
+    },
   },
 }
