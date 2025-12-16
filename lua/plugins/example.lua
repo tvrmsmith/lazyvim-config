@@ -47,6 +47,42 @@ return {
           },
         },
       },
+      dashboard = {
+        preset = {
+          keys = {
+            { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+            { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+            { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            {
+              icon = "󰢹 ",
+              key = "m",
+              desc = "Start Remote Session",
+              action = ":RemoteStart",
+            },
+            {
+              icon = " ",
+              key = "c",
+              desc = "Config",
+              action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
+            },
+            { icon = " ", key = "s", desc = "Restore Session", section = "session" },
+            { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
+            { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
+            { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+          },
+        },
+      },
+    },
+  },
+  {
+    "folke/noice.nvim",
+    opts = {
+      presets = {
+        bottom_search = false,
+        inc_rename = true,
+        lsp_doc_border = true,
+      },
     },
   },
   -- If you'd rather extend the default config, use the code below instead:
@@ -105,13 +141,16 @@ return {
           cmd = {
             "mise",
             "exec",
-            "ruby@3.4.7",
+            "ruby@3.1.7",
             "--",
             "bundle",
             "exec",
-            "--gemfile=" .. vim.fn.expand("~/dev/ruby-lsp/Gemfile"),
+            "--gemfile=.ruby-lsp/Gemfile",
             "ruby-lsp",
           },
+        },
+        solargraph = {
+          mason = false,
         },
       },
     },
@@ -180,6 +219,20 @@ return {
           path = "https://github.com/tvrmsmith/dotfiles.git",
         },
       },
+      remote = {
+        app_name = "nvim-LazyVim",
+      },
+      -- client_callback = function(port, workspace_config)
+      --   local cmd = ("open -a warp '/opt/homebrew/bin/nvim' --args '--server localhost:%s --remote-ui'"):format(port)
+      --   print("Running the command:" .. cmd)
+      --   vim.fn.jobstart(cmd, {
+      --     detach = true,
+      --     on_exit = function(job_id, exit_code, event_type)
+      --       -- This function will be called when the job exits
+      --       print("Client", job_id, "exited with code", exit_code, "Event type:", event_type)
+      --     end,
+      --   })
+      -- end,
     },
     config = true,
   },
@@ -191,9 +244,71 @@ return {
     opts = {
       adapters = {
         ["neotest-rspec"] = {
-          rspec_cmd = ".neotest-rspec-docker.sh",
+          rspec_cmd = function()
+            -- local dockerExists = vim.fn.executable("docker") == 1
+            -- if vim.env.NEOTEST_RUBY_USE_BUNDLE == "true" or not dockerExists then
+            return vim
+              .iter({
+                "bundle",
+                "exec",
+                "rspec",
+              })
+              :flatten()
+              :totable()
+            -- end
+            --
+            -- return vim
+            --   .iter({
+            --     "docker",
+            --     "compose",
+            --     "run",
+            --     "--rm",
+            --     "emr",
+            --     "bundle",
+            --     "exec",
+            --     "rspec",
+            --   })
+            --   :flatten()
+            --   :totable()
+          end,
+
+          -- transform_spec_path = function(path)
+          --   local prefix = require("neotest-rspec").root(path)
+          --   return string.sub(path, string.len(prefix) + 2, -1)
+          -- end,
+          --
+          -- results_path = "tmp/rspec.output",
+          -- formatter = "json",
         },
       },
     },
+  },
+  {
+    "mgierada/lazydocker.nvim",
+    dependencies = { "akinsho/toggleterm.nvim" },
+    config = function()
+      require("lazydocker").setup({
+        border = "curved", -- valid options are "single" | "double" | "shadow" | "curved"
+      })
+    end,
+    event = "BufRead",
+    keys = {
+      {
+        "<leader>ld",
+        function()
+          require("lazydocker").open()
+        end,
+        desc = "Open Lazydocker floating window",
+      },
+    },
+  },
+  {
+    "andythigpen/nvim-coverage",
+    version = "*",
+    config = function()
+      require("coverage").setup({
+        auto_reload = true,
+      })
+    end,
   },
 }
