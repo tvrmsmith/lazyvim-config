@@ -45,7 +45,10 @@ return {
     },
   },
   {
+    -- `opts` is required: without it lazy.nvim never calls setup(), so the
+    -- plugin never detects the OS and never syncs the theme.
     "f-person/auto-dark-mode.nvim",
+    opts = {},
   },
   -- {
   --   "zaldih/themery.nvim",
